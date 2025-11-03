@@ -1,38 +1,44 @@
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: docling-serve-two
-  namespace: ckoep-docling-serve
-  labels:
-    app: docling-serve
-    component: docling-serve-api
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: docling-serve
-      component: docling-serve-api
-  template:
-    metadata:
-      labels:
-        app: docling-serve
-        component: docling-serve-api
-    spec:
-      containers:
-        - name: api
-          image: ghcr.io/docling-project/docling-serve-cu124
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: httpd
+    namespace: ayush
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        deployment: httpd
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deployment: httpd
+      spec:
+        containers:
+        - image: image-registry.openshift-image-registry.svc:5000/openshift/httpd@sha256:b25e2af772c13ae5ff3339bc4bbdf52c49011e750f40b37a0b736cb82768a349
+          imagePullPolicy: IfNotPresent
+          name: httpd
           ports:
-            - name: http
-              containerPort: 5001
-              protocol: TCP
-          env:
-            - name: DOCLING_SERVE_ENABLE_UI
-              value: 'true'
-          resources:
-            limits:
-              cpu: '1'
-              memory: 4Gi
-            requests:
-              cpu: 250m
-              memory: 1Gi
-      restartPolicy: Always
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
