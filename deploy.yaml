@@ -2,7 +2,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: httpd
-  namespace: test
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: httpd
-          image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd@sha256:b25e2af772c13ae5ff3339bc4bbdf52c49011e750f40b37a0b736cb82768a349'
+          image: 'image-registry.openshift-image-registry.svc:5000/openshift/httpd@sha256:80bef2e07f40363ac40cdf3becaa28894bad6989ff494ec801cb79b87d446c2e'
           ports:
             - containerPort: 8080
               protocol: TCP
